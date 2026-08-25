@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // ✅ Backend API call
-            const response = await fetch('http://localhost:8081/api/v1/login/', {
+            const response = await fetch(`${window.location.origin}/api/v1/login/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
