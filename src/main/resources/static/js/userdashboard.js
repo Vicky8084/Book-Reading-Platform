@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8081';
+const API_BASE_URL = window.location.origin;
     let currentUser = null;
     let currentPage = 'dashboard';
     let userBooks = [];

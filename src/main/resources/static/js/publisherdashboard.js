@@ -1,7 +1,7 @@
 // =============================================
 // ✅ GLOBAL VARIABLES & CONFIGURATION
 // =============================================
-const API_BASE_URL = 'http://localhost:8081';
+const API_BASE_URL = window.location.origin;
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 // ✅ CORRECTED API Endpoints

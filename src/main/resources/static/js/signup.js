@@ -1,5 +1,5 @@
 // Backend Base URL
-const BACKEND_BASE_URL = 'http://localhost:8081';
+const BACKEND_BASE_URL = window.location.origin;
 
 // DOM Elements
 const form = document.getElementById('signupForm');

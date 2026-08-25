@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8081';
+const API_BASE_URL = window.location.origin;
 let allBooks = [];
 let filteredBooks = [];
 let categories = [];
