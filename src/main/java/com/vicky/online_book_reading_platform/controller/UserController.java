@@ -1,6 +1,7 @@
 package com.vicky.online_book_reading_platform.controller;
 
 import com.vicky.online_book_reading_platform.ResponseDTO.UserResponseDTO;
+import com.vicky.online_book_reading_platform.requestDTO.UpdateNameRequestDTO;
 import com.vicky.online_book_reading_platform.requestDTO.UserRequestDTO;
 import com.vicky.online_book_reading_platform.service.UserService;
 import jakarta.validation.Valid;
@@ -28,8 +29,8 @@ public class UserController {
     }
 
     @PostMapping("/update-user-name")
-    public ResponseEntity<UserResponseDTO> updateUserName(@RequestBody UserRequestDTO userRequestDTO, Authentication authentication){
+    public ResponseEntity<UserResponseDTO> updateUserName(@Valid @RequestBody UpdateNameRequestDTO updateNameRequestDTO, Authentication authentication){
         String email = authentication.getName();
-        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUserName(email, userRequestDTO));
+        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUserName(email, updateNameRequestDTO));
     }
 }
