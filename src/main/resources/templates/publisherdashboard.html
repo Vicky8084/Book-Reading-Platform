@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publisher Dashboard | Intelli-Read</title>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/publisherdashboard.css">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+</head>
+<body>
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="globalLoading">
+    <div class="spinner"></div>
+    <p>Processing your request...</p>
+</div>
+
+<!-- Toast notifications -->
+<div id="toast" class="toast"></div>
+
+<!-- Logout Confirmation Popup -->
+<div class="logout-overlay" id="logoutOverlay">
+    <div class="logout-modal">
+        <h2><i class='bx bx-log-out'></i> Confirm Logout</h2>
+        <p>Are you sure you want to log out from this session?</p>
+        <div class="logout-btn-group">
+            <button class="logout-confirm-btn" id="confirmLogout">Yes, Logout</button>
+            <button class="logout-cancel-btn" id="cancelLogout">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Header -->
+<header class="admin-header">
+    <div class="header-content">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Toggle menu">
+            <i class='bx bx-menu'></i>
+        </button>
+        <div class="header-left">
+            <h1>📚 Intelli-Read Publisher</h1>
+        </div>
+        <div class="header-right">
+            <div class="admin-info">
+                <span id="publisherName">Welcome, Publisher</span>
+                <button class="logout-btn" onclick="refreshSuggestions()" title="Refresh Suggestions">
+                    <i class='bx bx-refresh'></i> Refresh
+                </button>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class='bx bx-log-out'></i> Logout
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="admin-container">
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Publisher Panel</h2>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="menu-item active" onclick="showSection('dashboard')">
+                <i class='bx bx-dashboard'></i>
+                <span>Dashboard</span>
+            </li>
+            <li class="menu-item" onclick="showSection('myBooks')">
+                <i class='bx bx-book'></i>
+                <span>My Books</span>
+            </li>
+            <li class="menu-item" onclick="showSection('addBook')">
+                <i class='bx bx-plus-circle'></i>
+                <span>Add New Book</span>
+            </li>
+            <li class="menu-item" onclick="showSection('suggestions')">
+                <i class='bx bx-bulb'></i>
+                <span>Book Suggestions</span>
+            </li>
+            <li class="menu-item" onclick="showSection('analytics')">
+                <i class='bx bx-bar-chart'></i>
+                <span>Book Analytics</span>
+            </li>
+            <li class="menu-item" onclick="showSection('profile')">
+                <i class='bx bx-user'></i>
+                <span>Profile</span>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section active">
+            <div class="section-header">
+                <h1>Publisher Dashboard</h1>
+                <p>Manage your books and track performance</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="publisher-stats">
+                <div class="stat-card primary">
+                    <div class="stat-icon">
+                        <i class='bx bx-book'></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalBooks">0</h3>
+                        <p>Total Books</p>
+                    </div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-icon">
+                        <i class='bx bx-check-circle'></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="publishedBooks">0</h3>
+                        <p>Published Books</p>
+                    </div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-icon">
+                        <i class='bx bx-time'></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="draftBooks">0</h3>
+                        <p>Draft Books</p>
+                    </div>
+                </div>
+                <div class="stat-card info">
+                    <div class="stat-icon">
+                        <i class='bx bx-star'></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalReviews">0</h3>
+                        <p>Total Reviews</p>
+                    </div>
+                </div>
+                <div class="stat-card danger">
+                    <div class="stat-icon">
+                        <i class='bx bx-trending-up'></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="averageRating">0</h3>
+                        <p>Avg. Rating</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Books -->
+            <div class="activity-section">
+                <div class="activity-card">
+                    <h3>Recent Books</h3>
+                    <div class="activity-list" id="recentBooks">
+                        <!-- Recent books will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Distribution -->
+            <div class="activity-section" style="margin-top: 20px;">
+                <div class="activity-card">
+                    <h3>Category Distribution</h3>
+                    <div id="categoryDistribution">
+                        <!-- Category stats will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- My Books Section -->
+        <section id="myBooks" class="section">
+            <div class="section-header">
+                <h1>My Books</h1>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <i class='bx bx-search'></i>
+                        <input type="text" id="bookSearch" placeholder="Search books..." onkeyup="searchBooks()">
+                    </div>
+                    <select id="statusFilter" onchange="filterBooks()">
+                        <option value="">All Status</option>
+                        <option value="published">Published</option>
+                        <option value="draft">Draft</option>
+                    </select>
+                    <select id="categoryFilter" onchange="filterBooks()">
+                        <option value="">All Categories</option>
+                        <!-- Categories will be loaded dynamically -->
+                    </select>
+                </div>
+            </div>
+
+            <!-- Category Filters -->
+            <div class="category-filters" id="quickCategoryFilters">
+                <!-- Quick category filters will be loaded here -->
+            </div>
+
+            <div class="table-container">
+                <table id="bookTable">
+                    <thead>
+                    <tr>
+                        <th class="book-cover-cell">Cover</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Category</th>
+                        <th>Reviews</th>
+                        <th>Rating</th>
+                        <th>Language</th>
+                        <th>Status</th>
+                        <th>Date Added</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="bookTableBody">
+                    <!-- Books will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination" id="bookPagination">
+                <!-- Pagination will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Add Book Section -->
+        <section id="addBook" class="section">
+            <div class="section-header">
+                <h1>Add New Book</h1>
+                <p>Upload and publish your books to Intelli-Read</p>
+            </div>
+
+            <div class="upload-area" id="uploadArea">
+                <i class='bx bx-cloud-upload'></i>
+                <h3>Upload Book Cover</h3>
+                <p>Drag & drop or click to upload book cover image</p>
+                <input type="file" id="coverUpload" accept="image/*" style="display: none;">
+                <img id="coverPreview" class="book-cover-preview" style="display: none;">
+            </div>
+
+            <form id="addBookForm">
+                <input type="hidden" id="userId">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bookTitle">Book Title *</label>
+                        <input type="text" id="bookTitle" required maxlength="255">
+                    </div>
+                    <div class="form-group">
+                        <label for="bookAuthor">Author *</label>
+                        <input type="text" id="bookAuthor" required maxlength="255">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bookCategory">Category *</label>
+                        <select id="bookCategory" required>
+                            <option value="">Select Category</option>
+                            <!-- Categories will be loaded dynamically -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookLanguage">Language *</label>
+                        <input type="text" id="bookLanguage" value="English" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="bookDescription">Book Description</label>
+                    <textarea id="bookDescription" placeholder="Enter book description..." maxlength="1000"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="bookFile">Upload Book File (PDF/TXT) *</label>
+                    <input type="file" id="bookFile" accept=".pdf,.txt" required>
+                    <small>Only PDF and TXT files are allowed (max 10MB)</small>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="reset" class="btn-secondary" onclick="resetBookForm()">Clear Form</button>
+                    <button type="submit" class="btn-primary" id="submitBookBtn">
+                        <span class="loading-spinner" id="submitSpinner"></span>
+                        Save Book
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="analytics" class="section">
+            <div class="section-header">
+                <h1>Book Analytics</h1>
+                <p>Track your book performance and reader engagement</p>
+            </div>
+
+            <div class="analytics-grid">
+                <div class="chart-card">
+                    <h3>Category Performance</h3>
+                    <div class="chart-placeholder" id="categoryPerformanceChart">
+                        <p>Category-wise book performance</p>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Reader Engagement by Category</h3>
+                    <div class="chart-placeholder" id="readerEngagementChart">
+                        <p>Reader engagement metrics by category</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Suggestions Section -->
+        <section id="suggestions" class="section">
+            <div class="section-header">
+                <h1>Book Suggestions from Users</h1>
+                <p>Discover books that users want to read. Express interest or upload books directly.</p>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <i class='bx bx-search'></i>
+                        <input type="text" id="suggestionSearch" placeholder="Search suggestions..." onkeyup="searchPublisherSuggestions()">
+                    </div>
+                    <select id="suggestionFilter" onchange="filterPublisherSuggestions()">
+                        <option value="all">All Suggestions</option>
+                        <option value="interested">Interested</option>
+                        <option value="uploaded">Uploaded</option>
+                        <option value="trending">Trending</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Stats Cards for Suggestions -->
+            <div class="publisher-stats">
+                <div class="stat-card primary">
+                    <div class="stat-icon">
+                        <i class='bx bx-bulb'></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalPublisherSuggestions">0</h3>
+                        <p>Total Suggestions</p>
+                    </div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-icon">
+                        <i class='bx bx-show'></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="interestedPublisherSuggestions">0</h3>
+                        <p>You're Interested In</p>
+                    </div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-icon">
+                        <i class='bx bx-book'></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="uploadedPublisherSuggestions">0</h3>
+                        <p>Books Uploaded</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suggestions List -->
+            <div class="table-container">
+                <table id="suggestionTable">
+                    <thead>
+                    <tr>
+                        <th>Title & Author</th>
+                        <th>Suggested By</th>
+                        <th>Reason</th>
+                        <th>Upvotes</th>
+                        <th>Publisher Interest</th>
+                        <th>Your Action</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="suggestionTableBody">
+                    <tr>
+                        <td colspan="8" class="loading-cell">
+                            <div class="loading-spinner"></div>
+                            Loading suggestions...
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination" id="suggestionPagination">
+                <!-- Pagination will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="profile" class="section">
+            <div class="section-header">
+                <h1>Publisher Profile</h1>
+                <p>Manage your publisher account information</p>
+            </div>
+
+            <div class="settings-grid">
+                <div class="setting-card">
+                    <h3>Account Information</h3>
+                    <div class="setting-item">
+                        <label>Publisher Name</label>
+                        <input type="text" id="publisherNameInput" value="Your Publisher Name">
+                    </div>
+                    <div class="setting-item">
+                        <label>Contact Email</label>
+                        <input type="email" id="publisherEmail" value="publisher@example.com">
+                    </div>
+                    <div class="setting-item">
+                        <label>Phone Number</label>
+                        <input type="tel" id="publisherPhone" value="+91 9876543210">
+                    </div>
+                </div>
+
+                <div class="setting-card">
+                    <h3>Company Information</h3>
+                    <div class="setting-item">
+                        <label>Company Name</label>
+                        <input type="text" id="companyName" value="Your Company">
+                    </div>
+                    <div class="setting-item">
+                        <label>Address</label>
+                        <textarea id="companyAddress">Your company address</textarea>
+                    </div>
+                    <div class="setting-item">
+                        <label>Website</label>
+                        <input type="url" id="companyWebsite" value="https://yourwebsite.com">
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-primary" onclick="updateProfile()">Update Profile</button>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- Modal for book details -->
+<div id="bookModal" class="modal">
+    <div class="modal-content large">
+        <span class="close">&times;</span>
+        <h2>Book Details</h2>
+        <div id="bookDetails">
+            <!-- Book details will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<!-- Modal for edit book -->
+<div id="editBookModal" class="modal">
+    <div class="modal-content large">
+        <span class="close">&times;</span>
+        <h2>Edit Book</h2>
+        <form id="editBookForm">
+            <!-- Edit form will be loaded here -->
+        </form>
+    </div>
+</div>
+
+<script src="/js/publisherdashboard.js"></script>
+</body>
+</html>

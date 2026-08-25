@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login-SignUp | Intelli-Read</title>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="icon" type="image/x-icon" th:href="@{/images/favicon.ico}">
+</head>
+<body>
+
+<header>
+    <a th:href="@{/}">
+        <img th:src="@{/images/logo.png}" alt="IntelliRead Logo" style="height:80px; width:auto;">
+    </a>
+    <div class="nav-buttons">
+        <button class="btn btn-loginoutline">
+            <img th:src="@{/images/login.png}" alt="login-icon" style="height: 50px; width: auto;">
+        </button>
+    </div>
+</header>
+
+<div class="login-container">
+    <div class="login-card">
+        <h2>Welcome Back</h2>
+        <p class="subtitle">Sign in to your account</p>
+        <form class="login-form" id="loginForm">
+
+            <div class="role-selection">
+                <label>Select Login Type</label>
+                <div class="role-options">
+                    <div class="role-option" data-role="user">
+                        <input type="radio" id="role-user" name="role" value="USER" required checked>
+                        <i class='bx bx-user-circle role-icon'></i>
+                        <span>USER</span>
+                    </div>
+                    <div class="role-option" data-role="publisher">
+                        <input type="radio" id="role-publisher" name="role" value="PUBLISHER" required>
+                        <i class='bx bx-book-alt role-icon'></i>
+                        <span>PUBLISHER</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <i class="bx bx-envelope"></i>
+                <input type="email" id="email" name="email" placeholder="Email Address" required>
+            </div>
+
+            <div class="input-group">
+                <i class="bx bx-lock-alt"></i>
+                <input type="password" id="password" name="password" placeholder="Password" required>
+                <i class='bx bx-hide toggle-eye' id="togglePassword"></i>
+            </div>
+
+            <div class="form-options">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="remember"> Remember me
+                </label>
+                <a href="/forgotpassword" class="forgot-link">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="login-btn">Sign In</button>
+            <p class="signup-link">Don't have an account? - <a th:href="@{/signup}">Sign up here</a></p>
+            <p class="signup-link">SignIn as Admin - <a th:href="@{/admin-login}">Login Here</a></p>
+        </form>
+    </div>
+</div>
+
+<footer class="main-footer">
+    <div class="footer-section">
+        <h4>About</h4>
+        <p>Designed and Developed by <b style="color: rgb(206, 232, 10); font-size: large;">Vicky Gupta</b></p>
+    </div>
+    <div class="footer-section">
+        <p>&copy; <span id="currentYear">2026</span> Intelli-Read. All Rights Reserved.</p>
+        <p><a href="#">Terms of Service</a> | <a href="#">Privacy Policy</a></p>
+    </div>
+    <div class="footer-section">
+        <h4>License</h4>
+        <p>Standard License</p>
+    </div>
+</footer>
+
+<script th:src="@{/js/login.js}"></script>
+</body>
+</html>

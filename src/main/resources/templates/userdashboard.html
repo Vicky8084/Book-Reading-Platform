@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelli-Read - User Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+
+    <link rel="stylesheet" th:href="@{/css/userdashboard.css}">
+</head>
+
+<body>
+
+<div class="loading-spinner" id="loadingSpinner">
+    <div class="spinner"></div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<header>
+    <div class="logo">
+        <div class="hamburger-menu" id="hamburgerMenu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <a href="bookscreen"><img src="../images/logo.png" alt="Logo"></a>
+    </div>
+    <div class="nav-buttons">
+        <div class="user-menu" id="userMenu">
+            <div class="user-avatar">
+                <i class='bx bx-user'></i>
+            </div>
+            <div class="welcome-text">Welcome, <span id="username">Guest</span></div>
+            <div class="dropdown" id="dropdownMenu">
+                <a href="/bookscreen"><i class='bx bx-book'></i> Back to Books</a>
+                <a href="#" id="logoutBtn"><i class='bx bx-log-out'></i> Logout</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="main-content">
+    <div class="dashboard-container">
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <h3>Intelli-Read</h3>
+            </div>
+            <ul class="nav-links">
+                <li class="active"><a href="#" data-page="dashboard"><i class='bx bx-home'></i> Dashboard</a></li>
+                <li><a href="#" data-page="my-library"><i class='bx bx-book'></i> My Library</a></li>
+                <li><a href="#" data-page="reading-history"><i class='bx bx-history'></i> Reading History</a></li>
+                <li><a href="#" data-page="reviews"><i class='bx bx-star'></i> Reviews</a></li>
+                <li><a href="#" data-page="suggestions"><i class='bx bx-bulb'></i> Suggestions</a></li>
+                <li><a href="#" data-page="settings"><i class='bx bx-cog'></i> Settings</a></li>
+            </ul>
+        </div>
+
+        <div class="dashboard-main" id="dashboard-main">
+            <div id="dashboard-page" class="page-content active">
+                <div class="dashboard-header">
+                    <h2>User Dashboard</h2>
+                    <div class="welcome-text">Welcome back, <span id="dashboardUsername">User</span>!</div>
+                </div>
+
+                <div class="stats-container">
+                    <div class="stat-card stat-1">
+                        <div class="stat-icon">
+                            <i class='bx bx-book'></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="booksReadCount">0</h3>
+                            <p>Books Read</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-2">
+                        <div class="stat-icon">
+                            <i class='bx bx-time'></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="readingTime">0h</h3>
+                            <p>Reading Time</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-3">
+                        <div class="stat-icon">
+                            <i class='bx bx-star'></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="reviewsCount">0</h3>
+                            <p>Reviews Written</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-4">
+                        <div class="stat-icon">
+                            <i class='bx bx-trophy'></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="achievementsCount">5</h3>
+                            <p>Achievements</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>Currently Reading</h3>
+                        <a href="#" class="view-all" id="viewAllReading">View All</a>
+                    </div>
+                    <div class="books-grid" id="currentlyReadingGrid">
+                        <div class="empty-state">
+                            <i class='bx bx-book-open'></i>
+                            <p>No books currently being read</p>
+                            <p>Start reading to see your progress here</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>Recently Added</h3>
+                        <a href="#" class="view-all" id="viewAllRecent">View All</a>
+                    </div>
+                    <div class="books-grid" id="recentlyAddedGrid">
+                        <div class="empty-state">
+                            <i class='bx bx-book-add'></i>
+                            <p>No books added recently</p>
+                            <p>Add books to your library to see them here</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>Recent Activity</h3>
+                        <a href="#" class="view-all" id="viewAllActivity">View All</a>
+                    </div>
+                    <ul class="activity-list" id="recentActivityList">
+                        <div class="empty-state">
+                            <i class='bx bx-time'></i>
+                            <p>No recent activity</p>
+                            <p>Your reading activity will appear here</p>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="my-library-page" class="page-content">
+                <div class="dashboard-header">
+                    <h2>My Library</h2>
+                </div>
+
+                <div class="stats-container">
+                    <div class="stat-card stat-1">
+                        <div class="stat-icon">
+                            <i class='bx bx-book'></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalBooks">0</h3>
+                            <p>Total Books</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-2">
+                        <div class="stat-icon">
+                            <i class='bx bx-book-open'></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="readingBooks">0</h3>
+                            <p>Currently Reading</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-3">
+                        <div class="stat-icon">
+                            <i class='bx bx-check'></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="completedBooks">0</h3>
+                            <p>Completed</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-4">
+                        <div class="stat-icon">
+                            <i class='bx bx-star'></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="favoriteBooks">0</h3>
+                            <p>Favorites</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>All Books</h3>
+                        <div class="search-filter">
+                            <input type="text" id="librarySearch" placeholder="Search books..." class="search-input">
+                            <select id="libraryFilter" class="filter-select">
+                                <option value="all">All Books</option>
+                                <option value="reading">Currently Reading</option>
+                                <option value="completed">Completed</option>
+                                <option value="favorites">Favorites</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="books-grid" id="libraryBooksGrid">
+                        <div class="empty-state">
+                            <i class='bx bx-book'></i>
+                            <p>No books in your library</p>
+                            <p>Add books to start building your collection</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reading-history-page" class="page-content">
+                <div class="dashboard-header">
+                    <h2>Reading History</h2>
+                </div>
+
+                <div class="stats-container">
+                    <div class="stat-card stat-1">
+                        <div class="stat-icon">
+                            <i class='bx bx-calendar'></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="readingDays">0</h3>
+                            <p>Reading Days</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-2">
+                        <div class="stat-icon">
+                            <i class='bx bx-trending-up'></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="pagesRead">0</h3>
+                            <p>Pages Read</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-3">
+                        <div class="stat-icon">
+                            <i class='bx bx-time-five'></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="avgReadingTime">0h</h3>
+                            <p>Avg. Reading Time</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-4">
+                        <div class="stat-icon">
+                            <i class='bx bx-target-lock'></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="completionRate">0%</h3>
+                            <p>Completion Rate</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>Reading Timeline</h3>
+                        <select id="historyFilter" class="filter-select">
+                            <option value="all">All Time</option>
+                            <option value="month">This Month</option>
+                            <option value="week">This Week</option>
+                            <option value="today">Today</option>
+                        </select>
+                    </div>
+                    <ul class="activity-list" id="readingTimeline">
+                        <div class="empty-state">
+                            <i class='bx bx-history'></i>
+                            <p>No reading history yet</p>
+                            <p>Start reading to track your progress</p>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="reviews-page" class="page-content">
+                <div class="dashboard-header">
+                    <h2>My Reviews</h2>
+                </div>
+
+                <div class="stats-container">
+                    <div class="stat-card stat-1">
+                        <div class="stat-icon">
+                            <i class='bx bx-star'></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalReviews">0</h3>
+                            <p>Total Reviews</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-2">
+                        <div class="stat-icon">
+                            <i class='bx bx-like'></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="helpfulReviews">0</h3>
+                            <p>Helpful Reviews</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-3">
+                        <div class="stat-icon">
+                            <i class='bx bx-comment'></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="reviewComments">0</h3>
+                            <p>Comments Received</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-4">
+                        <div class="stat-icon">
+                            <i class='bx bx-trending-up'></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="avgRating">0.0</h3>
+                            <p>Average Rating</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>My Reviews</h3>
+                    </div>
+                    <div id="reviewsList">
+                        <div class="empty-state">
+                            <i class='bx bx-comment-detail'></i>
+                            <p>No reviews written yet</p>
+                            <p>Share your thoughts on the books you've read</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="suggestions-page" class="page-content">
+                <div class="dashboard-header">
+                    <h2>Book Suggestions</h2>
+                </div>
+
+                <div class="stats-container">
+                    <div class="stat-card stat-1">
+                        <div class="stat-icon">
+                            <i class='bx bx-bulb'></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalSuggestions">0</h3>
+                            <p>Total Suggestions</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-2">
+                        <div class="stat-icon">
+                            <i class='bx bx-check'></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="acceptedSuggestions">0</h3>
+                            <p>Accepted</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-3">
+                        <div class="stat-icon">
+                            <i class='bx bx-time'></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="pendingSuggestions">0</h3>
+                            <p>Pending</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-4">
+                        <div class="stat-icon">
+                            <i class='bx bx-book-add'></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="addedFromSuggestions">0</h3>
+                            <p>Added to Library</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>My Suggestions</h3>
+                        <button class="view-all" id="refreshSuggestionsBtn">Refresh</button>
+                    </div>
+                    <div class="suggestion-list" id="userSuggestionsList">
+                        <div class="empty-state">
+                            <i class='bx bx-bulb'></i>
+                            <p>No suggestions submitted yet</p>
+                            <p>Your submitted suggestions will appear here</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>Community Suggestions</h3>
+                        <span class="view-all">Vote on suggestions from other users</span>
+                    </div>
+                    <div class="suggestion-list" id="allSuggestionsList">
+                        <div class="empty-state">
+                            <i class='bx bx-message-square-dots'></i>
+                            <p>Loading community suggestions...</p>
+                            <p>Vote on books suggested by other readers</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>Your Suggested Books</h3>
+                    </div>
+                    <div class="books-grid" id="suggestionsGrid">
+                        <div class="empty-state">
+                            <i class='bx bx-bulb'></i>
+                            <p>No suggested books yet</p>
+                            <p>Your accepted suggestions will appear here</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>Suggest a Book</h3>
+                    </div>
+                    <div class="suggestion-form">
+                        <input type="text" id="suggestionTitle" placeholder="Book Title" class="form-input">
+                        <input type="text" id="suggestionAuthor" placeholder="Author" class="form-input">
+                        <textarea id="suggestionReason" placeholder="Why do you recommend this book?" class="form-textarea"></textarea>
+                        <button class="view-all" id="submitSuggestionBtn">Submit Suggestion</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="settings-page" class="page-content">
+                <div class="dashboard-header">
+                    <h2>Settings</h2>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>Account Settings</h3>
+                    </div>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="userFullName" class="form-input" value="Loading...">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="userEmail" class="form-input" value="Loading..." readonly>
+                        </div>
+                        <button class="view-all" id="saveProfileBtn">Save Changes</button>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>Reading Preferences</h3>
+                    </div>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label>Daily Reading Goal (minutes)</label>
+                            <input type="number" id="readingGoal" class="form-input" value="30" min="10" max="240">
+                        </div>
+                        <div class="form-group">
+                            <label>Preferred Categories</label>
+                            <div class="categories-list">
+                                <label><input type="checkbox" name="category" value="fiction"> Fiction</label>
+                                <label><input type="checkbox" name="category" value="non-fiction"> Non-Fiction</label>
+                                <label><input type="checkbox" name="category" value="sci-fi"> Science Fiction</label>
+                                <label><input type="checkbox" name="category" value="mystery"> Mystery</label>
+                                <label><input type="checkbox" name="category" value="biography"> Biography</label>
+                            </div>
+                        </div>
+                        <button class="view-all" id="savePreferencesBtn">Save Preferences</button>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>Notifications</h3>
+                    </div>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label><input type="checkbox" id="emailNotifications" checked> Email Notifications</label>
+                        </div>
+                        <div class="form-group">
+                            <label><input type="checkbox" id="readingReminders" checked> Daily Reading Reminders</label>
+                        </div>
+                        <div class="form-group">
+                            <label><input type="checkbox" id="newBookAlerts" checked> New Book Alerts</label>
+                        </div>
+                        <button class="view-all" id="saveNotificationsBtn">Save Notification Settings</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="main-footer" style="font-family: chakra petch;">
+    <div class="footer-section">
+        <h4>About</h4>
+        <p>Designed and Developed by <b class="team-highlight">Vicky Gupta</b></p>
+    </div>
+    <div class="footer-section">
+        <p>&copy; <span id="year"></span> Intelli-Read. All Rights Reserved.</p>
+        <p><a href="#">Terms of Service</a> | <a href="#">Privacy Policy</a></p>
+    </div>
+    <div class="footer-section">
+        <h4>License</h4>
+        <p>Standard License</p>
+    </div>
+</footer>
+
+<script th:src="@{/js/userdashboard.js}"></script>
+
+</body>
+</html>

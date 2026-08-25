@@ -1,0 +1,336 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Chakra Petch", sans-serif;
+  text-decoration: none;
+  list-style: none;
+}
+
+/* ===== BODY ===== */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+  overflow-y: auto;
+}
+
+/* Blurred Background */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url(../images/background.jpg);
+  background-size: cover;
+  background-position: center;
+  filter: blur(6px);
+  z-index: -1;
+  transform: scale(1.05);
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.15);
+  z-index: -1;
+}
+
+/* ===== HEADER (Same as forgotpassword) ===== */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 60px;
+  position: sticky;
+  width: 100%;
+  top: 0;
+  background: linear-gradient(to left, rgba(235,198,129,0.8), rgba(114,114,223,0.8));
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo img {
+  height: 65px;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 600;
+}
+.btn-loginoutline {
+  width: 60px;
+  height: 60px;
+  border: 2px solid rgb(252, 148, 110);
+  background: transparent;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: 0.3s;
+}
+.btn-loginoutline:hover {
+  background: rgb(231, 134, 23);
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  width: 100%;
+  padding: 115px 20px 20px;
+}
+
+/* ===== ADMIN PANEL ===== */
+.admin-container {
+  width: 100%;
+  max-width: 450px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.54);
+  box-shadow: 0 6px 15px rgb(220, 155, 15);
+  z-index: 1;
+}
+
+.admin-card {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 15px;
+  padding: 20px 30px;
+  box-shadow: 0 8px 25px rgba(46, 4, 255, 0.76);
+}
+
+.admin-card h2 {
+  color: #000;
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.admin-subtext {
+  color: #000;
+  margin-bottom: 30px;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* ===== FORM ===== */
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== ICON INPUT STYLE ===== */
+.icon-input {
+  position: relative;
+}
+
+.icon-input i {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #667eea;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.icon-input .bx-envelope,
+.icon-input .bx-lock-alt {
+  left: 15px;
+}
+
+.icon-input input {
+  padding: 15px 45px;
+  width: 100%;
+  border: 2px solid #e1e5e9;
+  border-radius: 10px;
+  font-size: 16px;
+  background: #f8f9fa;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  outline: none;
+}
+
+.icon-input input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.icon-input .toggle-eye {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #667eea;
+  z-index: 3;
+  pointer-events: auto;
+}
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+/* ===== BUTTON ===== */
+.submit-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* ===== SIGNUP LINK ===== */
+.signup-link {
+  color: #000;
+  font-size: 14px;
+}
+
+.signup-link a {
+  color: #e41111;
+}
+
+.signup-link a:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+/* ===== FOOTER (Same as forgotpassword) ===== */
+.main-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 60px;
+  background: linear-gradient(to right, rgba(235,198,129,0.8), rgba(114,114,223,0.8));
+  color: #eee;
+  width: 100%;
+  position: sticky;
+  z-index: 5;
+  flex-wrap: wrap;
+}
+
+.footer-section {
+  flex: 1;
+  min-width: 200px;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.footer-section h4 {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.footer-section p {
+  margin: 5px 0;
+}
+
+.footer-section a {
+  color: #eee;
+  text-decoration: none;
+}
+
+.footer-section a:hover {
+  text-decoration: underline;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  header {
+    padding: 12px 20px;
+  }
+
+  .main-content {
+    padding: 80px 15px 30px;
+  }
+
+  .admin-container {
+    padding: 15px;
+  }
+
+  .admin-card {
+    padding: 20px;
+  }
+
+  .admin-card h2 {
+    font-size: 24px;
+  }
+
+  .main-footer {
+    padding: 15px 20px;
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 70px 10px 20px;
+  }
+
+  .admin-container {
+    width: 95%;
+    padding: 10px;
+  }
+
+  .admin-card {
+    padding: 15px;
+  }
+
+  .admin-card h2 {
+    font-size: 22px;
+  }
+
+  .submit-btn {
+    font-size: 14px;
+  }
+}

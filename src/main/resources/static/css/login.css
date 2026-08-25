@@ -1,0 +1,344 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Chakra Petch", sans-serif;
+  text-decoration: none;
+  list-style: none;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  min-height: 100vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url(../images/background.jpg);
+  background-size: cover;
+  background-position: center;
+  filter: blur(5px);
+  z-index: -1;
+  transform: scale(1.05);
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.15);
+  z-index: -1;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 30px;
+  background: linear-gradient(to left, rgba(235, 198, 129, 0.8), rgba(114, 114, 223, 0.8));
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 4px 10px rgba(255, 0, 0, 0.5);
+}
+
+header img {
+  height: 50px;
+  width: auto;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.btn-loginoutline {
+  width: 60px;
+  height: 60px;
+  border: 2px solid rgb(252, 148, 110);
+  background: transparent;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: 0.3s;
+}
+
+.btn-loginoutline:hover {
+  background: rgb(231, 134, 23);
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary {
+  background: #4f46e5;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #3730a3;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 20px auto 100px auto;
+  padding: 20px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.54);
+  box-shadow: 0 6px 15px rgb(220, 155, 15);
+  z-index: 1;
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 15px;
+  padding: 20px 30px;
+  box-shadow: 0 8px 25px rgba(46, 4, 255, 0.76);
+}
+
+.login-card h2 {
+  color: #000;
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.subtitle {
+  color: #000;
+  margin-bottom: 30px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-group {
+  position: relative;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 15px 45px;
+  border: 2px solid #e1e5e9;
+  border-radius: 10px;
+  font-size: 16px;
+  background: #f8f9fa;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  outline: none;
+}
+
+.input-group input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.input-group i {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #667eea;
+  font-size: 20px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.input-group i.bx-envelope,
+.input-group i.bx-lock-alt {
+  left: 15px;
+}
+
+.input-group i.toggle-eye {
+  right: 15px;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.input-group input[type="password"] {
+  padding-left: 45px;
+  padding-right: 15px;
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: #666;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkbox-label input {
+  width: auto;
+  margin-right: 8px;
+  transform: scale(1.2);
+}
+
+.forgot-link {
+  color: #ff0000;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.forgot-link:hover {
+  color: #764ba2;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.login-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.signup-link {
+  color: #000;
+  font-size: 14px;
+}
+
+.signup-link a {
+  color: #e41111;
+}
+
+.signup-link a:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+.main-footer {
+  width: 100%;
+  text-align: center;
+  background: linear-gradient(to right, rgba(235, 198, 129, 0.8), rgba(114, 114, 223, 0.8));
+  color: #fff;
+  padding: 15px 0;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  box-shadow: 0 -5px 20px rgba(225, 39, 39, 0.35),
+              0 -2px 10px rgba(249, 21, 21, 0.4),
+              0 0 25px rgba(247, 80, 14, 0.2);
+  margin-top: auto;
+}
+
+.footer-section h4 {
+  margin-bottom: 10px;
+  color: black;
+  font-weight: bold;
+}
+
+.footer-section span {
+  color: yellow;
+  font-weight: bold;
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 30px 20px;
+    margin: 10px;
+  }
+  .login-card h2 {
+    font-size: 24px;
+  }
+}
+
+.role-selection {
+  margin-bottom: 5px;
+}
+
+.role-options {
+  display: flex;
+  gap: 15px;
+  margin-top: 8px;
+}
+
+.role-option {
+  flex: 1;
+  padding: 5px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #f9f9f9;
+}
+
+.role-option:hover {
+  border-color: #6c63ff;
+  background-color: #f0f0ff;
+}
+
+.role-option.selected {
+  border-color: #6c63ff;
+  background-color: #e6e4ff;
+  font-weight: bold;
+}
+
+.role-option input {
+  display: none;
+}
+
+.role-icon {
+  font-size: 24px;
+  margin-bottom: 5px;
+  display: block;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-caps-lock-indicator,
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  position: absolute;
+  right: -9999px;
+}
+
+input[type="password"]::-webkit-textfield-decoration-container {
+  display: none;
+}
