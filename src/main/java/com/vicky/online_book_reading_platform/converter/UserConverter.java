@@ -9,7 +9,6 @@ public class UserConverter {
         User user = new User();
         user.setName(userRequestDTO.getName());
         user.setEmail(userRequestDTO.getEmail());
-        user.setPasswordHash(userRequestDTO.getPassword());
         user.setRole(userRequestDTO.getRole());
         user.setAge(userRequestDTO.getAge());
         user.setPhoneNumber(userRequestDTO.getPhoneNumber());
@@ -30,17 +29,3 @@ public class UserConverter {
         return userResponseDTO;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

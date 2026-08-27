@@ -241,18 +241,7 @@ function showLoading(show) {
 // ✅ AUTHENTICATION FUNCTIONS
 // =============================================
 
-function getAuthToken() {
-    try {
-        return localStorage.getItem('jwtToken') || sessionStorage.getItem('jwtToken');
-    } catch (error) {
-        console.error('❌ Error getting auth token:', error);
-        return null;
-    }
-}
-
 async function authFetch(url, options = {}) {
-    const token = getAuthToken();
-
     const headers = {
         ...options.headers
     };
@@ -261,14 +250,11 @@ async function authFetch(url, options = {}) {
         headers['Content-Type'] = 'application/json';
     }
 
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-    }
-
     try {
         const response = await fetch(url, {
             ...options,
-            headers
+            headers,
+            credentials: 'include'
         });
 
         if (response.status === 401 || response.status === 403) {
@@ -296,15 +282,6 @@ async function authFetch(url, options = {}) {
 
 function initializeDashboard() {
     try {
-        const token = getAuthToken();
-        if (!token) {
-            showToast('Please login to access publisher dashboard', 'error');
-            setTimeout(() => {
-                window.location.href = '/login';
-            }, 2000);
-            return;
-        }
-
         const savedPublisher = localStorage.getItem('currentPublisher');
         if (savedPublisher) {
             currentPublisher = JSON.parse(savedPublisher);

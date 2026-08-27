@@ -1,5 +1,6 @@
 package com.vicky.online_book_reading_platform.service;
 
+import com.vicky.online_book_reading_platform.enums.Status;
 import com.vicky.online_book_reading_platform.model.User;
 import com.vicky.online_book_reading_platform.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        // ✅ Constructor use karo
+        // Publisher agar admin ne deactivate kar diya, toh existing token bhi
+        // agli request pe reject ho jaye — sirf login-time check kaafi nahi
+        if (user.getStatus() == Status.INACTIVE) {
+            throw new UsernameNotFoundException("Account is inactive");
+        }
+
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPasswordHash(),

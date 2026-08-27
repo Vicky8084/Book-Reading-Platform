@@ -2,6 +2,7 @@ package com.vicky.online_book_reading_platform.service;
 
 import com.vicky.online_book_reading_platform.ResponseDTO.LoginResponseDTO;
 import com.vicky.online_book_reading_platform.converter.LoginConverter;
+import com.vicky.online_book_reading_platform.enums.Status;
 import com.vicky.online_book_reading_platform.model.User;
 import com.vicky.online_book_reading_platform.repository.UserRepository;
 import com.vicky.online_book_reading_platform.requestDTO.LoginRequestDTO;
@@ -28,6 +29,9 @@ public class LoginService {
 
     @Value("${jwt.expiration-ms}")
     private long jwtExpirationMs;
+
+    @Value("${cookie.secure}")
+    private boolean cookieSecure;
 
     @Autowired
     public LoginService(UserRepository userRepository,
@@ -57,6 +61,13 @@ public class LoginService {
             return error;
         }
 
+        if (user.getStatus() == Status.INACTIVE) {
+            LoginResponseDTO error = new LoginResponseDTO();
+            error.setSuccess(false);
+            error.setMessage("Your publisher account is pending admin approval. Please wait for approval before logging in.");
+            return error;
+        }
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequestDTO.getEmail(),
@@ -68,7 +79,7 @@ public class LoginService {
         String jwtToken = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
         ResponseCookie cookie = ResponseCookie.from("token", jwtToken)
                 .httpOnly(true)
-                .secure(true)
+                .secure(cookieSecure)
                 .path("/")
                 .maxAge(jwtExpirationMs / 1000)
                 .sameSite("Strict")

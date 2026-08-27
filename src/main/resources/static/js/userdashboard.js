@@ -1020,9 +1020,8 @@ const API_BASE_URL = window.location.origin;
     async function saveProfile() {
         const userFullName = document.getElementById('userFullName');
         const userEmail = document.getElementById('userEmail');
-        const userLanguage = document.getElementById('userLanguage');
 
-        if (!userFullName || !userEmail || !userLanguage) return;
+        if (!userFullName || !userEmail) return;
 
         const newName = userFullName.value.trim();
 
