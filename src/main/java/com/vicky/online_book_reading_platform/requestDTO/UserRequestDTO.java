@@ -10,6 +10,7 @@ public class UserRequestDTO{
     @NotBlank(message = "Name is required")
     private String name;
 
+    @NotBlank(message = "Password is required")
     @Size(min = 8, message = "Password should be at least 8 character")
     private String password;
 

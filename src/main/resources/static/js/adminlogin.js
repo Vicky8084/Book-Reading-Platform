@@ -29,7 +29,7 @@ async function validateAndLogin() {
     loginBtn.innerHTML = 'Logging in...';
     loginBtn.disabled = true;
 
-    const response = await fetch('/api/admin/login', {
+    const response = await fetch(`${window.location.origin}/api/v1/login/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: email.toLowerCase().trim(), password })
@@ -37,10 +37,22 @@ async function validateAndLogin() {
 
     const data = await response.json();
 
-    if (data.success) {
-      sessionStorage.setItem('admin', JSON.stringify(data.admin));
-      sessionStorage.setItem('isAdmin', 'true');
+    if (data.success && data.role === 'ADMIN') {
+      const userData = {
+        userId: data.userId,
+        name: data.userName,
+        email: data.email,
+        role: data.role,
+        age: data.age,
+        phoneNumber: data.phoneNumber
+      };
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('currentUserId', data.userId.toString());
+
       window.location.href = '/admin-dashboard';
+    } else if (data.success && data.role !== 'ADMIN') {
+      showError('This account is not an admin account.');
     } else {
       showError(data.message || 'Invalid admin credentials');
     }
@@ -66,8 +78,14 @@ document.getElementById('adminForm').addEventListener('keypress', function(e) {
 });
 
 window.addEventListener('load', function() {
-  const isAdmin = sessionStorage.getItem('isAdmin');
-  if (isAdmin) {
-    window.location.href = '/admin-dashboard';
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  const userData = localStorage.getItem('user');
+  if (isLoggedIn === 'true' && userData) {
+    const user = JSON.parse(userData);
+    if (user.role === 'ADMIN') {
+      window.location.href = '/admin-dashboard';
+    }
   }
+  const yearEl = document.getElementById('year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
 });
