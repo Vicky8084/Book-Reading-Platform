@@ -1,7 +1,6 @@
 package com.vicky.online_book_reading_platform.converter;
 
 import com.vicky.online_book_reading_platform.ResponseDTO.LoginResponseDTO;
-import com.vicky.online_book_reading_platform.enums.Role;
 import com.vicky.online_book_reading_platform.model.User;
 
 public class LoginConverter {
