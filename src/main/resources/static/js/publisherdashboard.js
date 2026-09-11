@@ -1,3 +1,4 @@
+let allMyBooks = [];
 let currentUser = null;
 function loadCurrentUser() {
     try {
@@ -124,6 +125,10 @@ function initializeDashboard() {
     }
 
     renderUnavailableSections();
+
+    // Book + Category backend ab ready hai — real data load karo
+    loadCategories();
+    loadMyBooks();
 }
 
 function renderUnavailableSections() {
@@ -137,11 +142,6 @@ function renderUnavailableSections() {
         categoryDistribution.innerHTML = `<p class="empty-state">Not available yet.</p>`;
     }
 
-    const bookTableBody = document.getElementById('bookTableBody');
-    if (bookTableBody) {
-        bookTableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Book management is coming soon.</td></tr>`;
-    }
-
     const quickCategoryFilters = document.getElementById('quickCategoryFilters');
     if (quickCategoryFilters) {
         quickCategoryFilters.innerHTML = '';
@@ -152,14 +152,226 @@ function renderUnavailableSections() {
         categoryFilter.innerHTML = '<option value="all">All Categories</option>';
     }
 
-    const bookCategory = document.getElementById('bookCategory');
-    if (bookCategory) {
-        bookCategory.innerHTML = '<option value="">Categories not available yet</option>';
-    }
-
     const suggestionTableBody = document.getElementById('suggestionTableBody');
     if (suggestionTableBody) {
         suggestionTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Suggestions feature is coming soon.</td></tr>`;
+    }
+}
+
+// ===== Category dropdown ko DB se bharna =====
+async function loadCategories() {
+    const bookCategory = document.getElementById('bookCategory');
+    const newCategoryParent = document.getElementById('newCategoryParent');
+    try {
+        const response = await fetch(`${window.location.origin}/api/v1/category/findAll`, {
+            credentials: 'include'
+        });
+        if (!response.ok) throw new Error('Failed to fetch categories');
+        const categories = await response.json();
+
+        if (bookCategory) {
+            const options = categories.map(c => `<option value="${c.id}">${c.categoryName}</option>`).join('');
+            bookCategory.innerHTML = '<option value="">Select Category</option>' + options +
+                '<option value="__new__">+ Suggest a new category</option>';
+        }
+        if (newCategoryParent) {
+            const parentOptions = categories.map(c => `<option value="${c.id}">${c.categoryName}</option>`).join('');
+            newCategoryParent.innerHTML = '<option value="">None (top-level category)</option>' + parentOptions;
+        }
+    } catch (error) {
+        if (bookCategory) bookCategory.innerHTML = '<option value="">Failed to load categories</option>';
+        showToast('Could not load categories. Please refresh the page.', 'error');
+    }
+}
+function toggleCategorySuggestBlock() {
+    const bookCategory = document.getElementById('bookCategory');
+    const block = document.getElementById('suggestCategoryBlock');
+    if (block) {
+        block.style.display = (bookCategory && bookCategory.value === '__new__') ? 'block' : 'none';
+    }
+}
+
+// Pehle ye function standalone /category/suggest call karke naye category ko turant DB mein
+// save kar deta tha — chahe book upload aage fail ho jaaye. Ab ye sirf book-upload payload ke
+// liye category fields taiyar karta hai (categoryId YA newCategoryName+newCategoryParentId),
+// koi alag API call nahi karta. Category ab sirf tabhi banegi jab poora /book/upload request
+// backend mein saari validations (PDF size, PDF validity, cover image) pass kar le.
+function buildCategoryFields() {
+    const bookCategory = document.getElementById('bookCategory');
+
+    if (bookCategory.value !== '__new__') {
+        if (!bookCategory.value) {
+            throw new Error('Please select a category');
+        }
+        return { categoryId: parseInt(bookCategory.value) };
+    }
+
+    const newCategoryName = document.getElementById('newCategoryName').value.trim();
+    const parentId = document.getElementById('newCategoryParent').value;
+
+    if (!newCategoryName) {
+        throw new Error('Please enter a name for the new category');
+    }
+
+    return {
+        newCategoryName: newCategoryName,
+        newCategoryParentId: parentId ? parseInt(parentId) : null
+    };
+}
+
+// ===== Publisher ki apni books load karke table bharna =====
+async function loadMyBooks() {
+    const bookTableBody = document.getElementById('bookTableBody');
+    if (!bookTableBody) return;
+
+    try {
+        const response = await fetch(`${window.location.origin}/api/v1/book/my-books`, {
+            credentials: 'include'
+        });
+        if (!response.ok) throw new Error('Failed to fetch books');
+
+        const books = await response.json();
+        allMyBooks = books;
+        updateBookStats(books);
+
+        if (books.length === 0) {
+            bookTableBody.innerHTML = `<tr><td colspan="10" style="text-align:center;">No books yet. Add your first book above.</td></tr>`;
+            return;
+        }
+
+        bookTableBody.innerHTML = books.map(b => `
+            <tr>
+                <td class="book-cover-cell">
+                    ${b.coverImagePath ? `<img src="${escapeHtml(b.coverImagePath)}" alt="cover" style="width:40px;height:56px;object-fit:cover;">` : '-'}
+                </td>
+                <td>${escapeHtml(b.title)}</td>
+                <td>${escapeHtml(b.author)}</td>
+                <td>${escapeHtml(b.categoryName || '-')}</td>
+                <td>-</td>
+                <td>-</td>
+                <td>${escapeHtml(b.language)}</td>
+                <td>${escapeHtml(b.status)}</td>
+                <td>${b.uploadedAt ? new Date(b.uploadedAt).toLocaleDateString() : '-'}</td>
+                <td>
+                    <button type="button" class="btn-secondary" onclick="editBook(${b.id})">Edit</button>
+                    <button type="button" class="btn-secondary" onclick="confirmDeleteBook(${b.id})">Delete</button>
+                </td>
+            </tr>
+        `).join('');
+    } catch (error) {
+        bookTableBody.innerHTML = `<tr><td colspan="10" style="text-align:center;">Failed to load books.</td></tr>`;
+    }
+}
+
+function updateBookStats(books) {
+    const totalEl = document.getElementById('totalBooks');
+    const publishedEl = document.getElementById('publishedBooks');
+    const pendingEl = document.getElementById('draftBooks');
+
+    if (totalEl) totalEl.textContent = books.length;
+    if (publishedEl) publishedEl.textContent = books.filter(b => b.status === 'PUBLISHED').length;
+    if (pendingEl) pendingEl.textContent = books.filter(b => b.status === 'PENDING').length;
+}
+
+function editBook(bookId) {
+    const book = allMyBooks.find(b => b.id === bookId);
+    if (!book) return;
+
+    const form = document.getElementById('editBookForm');
+    if (!form) return;
+
+    form.innerHTML = `
+        <input type="hidden" id="editBookId" value="${book.id}">
+        <div class="form-group">
+            <label>Book Title *</label>
+            <input type="text" id="editBookTitle" value="${escapeHtml(book.title)}" required>
+        </div>
+        <div class="form-group">
+            <label>Author *</label>
+            <input type="text" id="editBookAuthor" value="${escapeHtml(book.author)}" required>
+        </div>
+        <div class="form-group">
+            <label>Language *</label>
+            <input type="text" id="editBookLanguage" value="${escapeHtml(book.language)}" required>
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+            <textarea id="editBookDescription">${escapeHtml(book.description || '')}</textarea>
+        </div>
+        <div class="action-buttons">
+            <button type="submit" class="btn-primary">Save Changes</button>
+        </div>
+    `;
+
+    form.onsubmit = async function(e) {
+        e.preventDefault();
+        await submitEditBook(book.categoryId);
+    };
+
+    const editModal = document.getElementById('editBookModal');
+    if (editModal) editModal.style.display = 'block';
+}
+
+async function submitEditBook(categoryId) {
+    const bookId = document.getElementById('editBookId').value;
+    const payload = {
+        title: document.getElementById('editBookTitle').value.trim(),
+        author: document.getElementById('editBookAuthor').value.trim(),
+        description: document.getElementById('editBookDescription').value.trim(),
+        language: document.getElementById('editBookLanguage').value.trim(),
+        categoryId: categoryId
+    };
+
+    showLoading(true);
+    try {
+        const response = await fetch(`${window.location.origin}/api/v1/book/${bookId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            showToast('Book updated. It will be reviewed again by admin.', 'success');
+            closeEditModal();
+            loadMyBooks();
+        } else {
+            const errorText = await response.text();
+            showToast('Update failed: ' + errorText, 'error');
+        }
+    } catch (error) {
+        showToast('Error updating book', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+function confirmDeleteBook(bookId) {
+    if (!window.confirm('Are you sure you want to delete this book? This cannot be undone.')) {
+        return;
+    }
+    deleteBookRequest(bookId);
+}
+
+async function deleteBookRequest(bookId) {
+    showLoading(true);
+    try {
+        const response = await fetch(`${window.location.origin}/api/v1/book/${bookId}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+
+        if (response.ok) {
+            showToast('Book deleted successfully', 'success');
+            loadMyBooks();
+        } else {
+            const errorText = await response.text();
+            showToast('Delete failed: ' + errorText, 'error');
+        }
+    } catch (error) {
+        showToast('Error deleting book', 'error');
+    } finally {
+        showLoading(false);
     }
 }
 
@@ -191,10 +403,12 @@ function setupEventListeners() {
 
     const addBookForm = document.getElementById('addBookForm');
     if (addBookForm) {
-        addBookForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            showToast('Book upload is not available yet - this feature is coming soon.', 'error');
-        });
+        addBookForm.addEventListener('submit', handleAddBookSubmit);
+    }
+
+    const bookCategory = document.getElementById('bookCategory');
+    if (bookCategory) {
+        bookCategory.addEventListener('change', toggleCategorySuggestBlock);
     }
 
     window.addEventListener('click', function(event) {
@@ -240,6 +454,83 @@ function setupEventListeners() {
     }
 }
 
+// ===== Add Book form submit — real backend call =====
+async function handleAddBookSubmit(e) {
+    e.preventDefault();
+
+    let categoryFields;
+    try {
+        categoryFields = buildCategoryFields();
+    } catch (error) {
+        showToast(error.message || 'Please select or suggest a category', 'error');
+        return;
+    }
+
+    const bookData = {
+        title: document.getElementById('bookTitle').value.trim(),
+        author: document.getElementById('bookAuthor').value.trim(),
+        description: document.getElementById('bookDescription').value.trim(),
+        language: document.getElementById('bookLanguage').value.trim(),
+        ...categoryFields
+    };
+
+    if (!bookData.title || !bookData.author || !bookData.language) {
+        showToast('Please fill all required fields', 'error');
+        return;
+    }
+
+    const bookFileInput = document.getElementById('bookFile');
+    const coverUploadInput = document.getElementById('coverUpload');
+
+    const pdfFile = bookFileInput ? bookFileInput.files[0] : null;
+    const coverImage = coverUploadInput ? coverUploadInput.files[0] : null;
+
+    if (!pdfFile) {
+        showToast('Please select a book file (PDF)', 'error');
+        return;
+    }
+    // Server bhi 10MB check karta hai — ye sirf turant feedback ke liye, upload shuru hone se pehle
+    if (pdfFile.size > 10 * 1024 * 1024) {
+        showToast('PDF file size should not exceed 10MB', 'error');
+        return;
+    }
+    if (!coverImage) {
+        showToast('Please upload a cover image', 'error');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('book', new Blob([JSON.stringify(bookData)], { type: 'application/json' }));
+    formData.append('pdfFile', pdfFile);
+    formData.append('coverImage', coverImage);
+
+    const submitBtn = document.getElementById('submitBookBtn');
+    if (submitBtn) submitBtn.disabled = true;
+    showLoading(true);
+
+    try {
+        const response = await fetch(`${window.location.origin}/api/v1/book/upload`, {
+            method: 'POST',
+            credentials: 'include',
+            body: formData
+        });
+
+        if (response.ok) {
+            showToast('Book uploaded successfully! Waiting for review.', 'success');
+            resetBookForm();
+            loadMyBooks();
+        } else {
+            const errorText = await response.text();
+            showToast('Upload failed: ' + errorText, 'error');
+        }
+    } catch (error) {
+        showToast('Error uploading book. Please try again.', 'error');
+    } finally {
+        showLoading(false);
+        if (submitBtn) submitBtn.disabled = false;
+    }
+}
+
 function handleCoverUpload(files) {
     if (!files || !files[0]) return;
     const file = files[0];
@@ -280,6 +571,8 @@ function closeModal(modalId) {
 function resetBookForm() {
     const form = document.getElementById('addBookForm');
     if (form) form.reset();
+    const suggestBlock = document.getElementById('suggestCategoryBlock');
+    if (suggestBlock) suggestBlock.style.display = 'none';
     const preview = document.getElementById('coverPreview');
     if (preview) preview.style.display = 'none';
 }
@@ -347,6 +640,13 @@ async function updateProfile() {
     } finally {
         showLoading(false);
     }
+}
+
+function escapeHtml(value) {
+    if (value === null || value === undefined) return '';
+    const div = document.createElement('div');
+    div.textContent = String(value);
+    return div.innerHTML;
 }
 
 document.addEventListener('DOMContentLoaded', function() {

@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
+        const role = document.querySelector('input[name="role"]:checked').value;
 
         if (!email || !password) {
             showQuickMessage('Please fill in all fields', 'error');
@@ -46,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ email, password, role })
             });
 
             const data = await response.json();

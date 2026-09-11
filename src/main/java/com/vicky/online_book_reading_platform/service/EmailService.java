@@ -92,4 +92,54 @@ public class EmailService {
             log.error("Failed to send welcome email to: {}", user.getEmail(), e);
         }
     }
+
+    // Forget Password flow ke liye OTP email bhejta hai (User aur Publisher dono ke liye same)
+    @Async
+    public void sendOtpEmail(User user, String otp) {
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+
+            helper.setFrom(fromEmail);
+            helper.setTo(user.getEmail());
+            helper.setSubject("🔐 Your IntelliRead Password Reset OTP");
+
+            String content = "<html>" +
+                    "<body style='font-family: Arial, sans-serif; color: #333; line-height: 1.6;'>" +
+                    "<div style='max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;'>" +
+                    "<div style='text-align: center; margin-bottom: 20px;'>" +
+                    "<img src='cid:logoImage' width='150' alt='IntelliRead Logo' style='margin-bottom: 20px;'>" +
+                    "<h1 style='color: #2c5aa0; margin-bottom: 10px;'>Password Reset Request</h1>" +
+                    "</div>" +
+                    "<div style='background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;'>" +
+                    "<h2 style='color: #2c5aa0; margin-bottom: 15px;'>Hello " + user.getName() + ",</h2>" +
+                    "<p style='margin-bottom: 15px;'>We received a request to reset your IntelliRead password. Use the OTP below to proceed:</p>" +
+                    "<div style='text-align: center; margin: 25px 0;'>" +
+                    "<span style='display: inline-block; padding: 15px 35px; background: #2c5aa0; color: white; " +
+                    "font-size: 28px; letter-spacing: 8px; border-radius: 8px; font-weight: bold;'>" + otp + "</span>" +
+                    "</div>" +
+                    "<p style='margin-bottom: 5px;'>This OTP is valid for <strong>2 minutes</strong> only.</p>" +
+                    "<p style='color: #999; font-size: 13px;'>If you didn't request this, you can safely ignore this email — your password will remain unchanged.</p>" +
+                    "</div>" +
+                    "<div style='border-top: 1px solid #e0e0e0; padding-top: 20px; margin-top: 20px; text-align: center;'>" +
+                    "<p style='color: #666; margin-bottom: 5px;'>📧 Email: <a href='mailto:noreply.intelliread@gmail.com' style='color: #2c5aa0;'>noreply.intelliread@gmail.com</a></p>" +
+                    "</div>" +
+                    "</div>" +
+                    "</body></html>";
+
+            helper.setText(content, true);
+
+            try {
+                helper.addInline("logoImage", new ClassPathResource("static/images/logo.png"));
+            } catch (Exception e) {
+                log.warn("Logo image not found, sending email without logo");
+            }
+
+            mailSender.send(mimeMessage);
+            log.info("OTP email sent to: {}", user.getEmail());
+
+        } catch (MessagingException | RuntimeException e) {
+            log.error("Failed to send OTP email to: {}", user.getEmail(), e);
+        }
+    }
 }

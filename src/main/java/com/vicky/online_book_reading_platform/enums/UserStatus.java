@@ -1,6 +1,8 @@
 package com.vicky.online_book_reading_platform.enums;
 
-public enum Status {
+public enum UserStatus {
     ACTIVE,
-    INACTIVE
+    PENDING,
+    APPROVED,
+    REJECTED
 }

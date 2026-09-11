@@ -25,7 +25,7 @@ public class UserConverter {
         userResponseDTO.setCreatedAt(user.getCreatedAt());
         userResponseDTO.setUpdatedAt(user.getUpdatedAt());
         userResponseDTO.setAge(user.getAge());
-        userResponseDTO.setStatus(user.getStatus());
+        userResponseDTO.setUserStatus(user.getUserStatus());
         return userResponseDTO;
     }
 }

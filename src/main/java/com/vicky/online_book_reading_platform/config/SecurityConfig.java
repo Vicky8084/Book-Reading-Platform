@@ -47,11 +47,29 @@ public class SecurityConfig {
                                 "/js/**",
                                 "/images/**",
                                 "/books",
-                                "/api/v1/login/**"
+                                "/api/v1/login/**",
+                                "/api/v1/category/findAll",
+                                "/api/v1/book/public/**"
                         ).permitAll()
-                        .requestMatchers("/publisher-dashboard").hasRole("PUBLISHER")
-                        .requestMatchers("/user-dashboard", "/bookscreen").hasRole("USER")
-                        .requestMatchers("/admin-dashboard").hasRole("ADMIN")
+                        .requestMatchers(
+                                "/publisher-dashboard",
+                                "/api/v1/category/suggest",
+                                "/api/v1/book/upload",
+                                "/api/v1/book/my-books",
+                                "/api/v1/book/*"
+                        ).hasRole("PUBLISHER")
+                        .requestMatchers(
+                                "/user-dashboard",
+                                "/bookscreen",
+                                "/read/**"
+                        ).hasRole("USER")
+                        .requestMatchers(
+                                "/admin-dashboard",
+                                "/api/v1/admin/**",
+                                "/api/v1/category/pending",
+                                "/api/v1/category/approve/**",
+                                "/api/v1/category/reject/**"
+                        ).hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

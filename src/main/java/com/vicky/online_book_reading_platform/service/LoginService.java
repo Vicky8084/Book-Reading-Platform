@@ -2,7 +2,7 @@ package com.vicky.online_book_reading_platform.service;
 
 import com.vicky.online_book_reading_platform.ResponseDTO.LoginResponseDTO;
 import com.vicky.online_book_reading_platform.converter.LoginConverter;
-import com.vicky.online_book_reading_platform.enums.Status;
+import com.vicky.online_book_reading_platform.enums.UserStatus;
 import com.vicky.online_book_reading_platform.model.User;
 import com.vicky.online_book_reading_platform.repository.UserRepository;
 import com.vicky.online_book_reading_platform.requestDTO.LoginRequestDTO;
@@ -61,10 +61,25 @@ public class LoginService {
             return error;
         }
 
-        if (user.getStatus() == Status.INACTIVE) {
+        // Login form pe jo role select kiya tha, account ke actual role se match hona chahiye —
+        // warna publisher, user ka login form use karke (ya ulta) login na kar paaye
+        if (loginRequestDTO.getRole() != null && !loginRequestDTO.getRole().equalsIgnoreCase(user.getRole().name())) {
+            LoginResponseDTO error = new LoginResponseDTO();
+            error.setSuccess(false);
+            error.setMessage("No " + loginRequestDTO.getRole().toLowerCase() + " account found with these credentials. Please select the correct role.");
+            return error;
+        }
+
+        if (user.getUserStatus() == UserStatus.PENDING) {
             LoginResponseDTO error = new LoginResponseDTO();
             error.setSuccess(false);
             error.setMessage("Your publisher account is pending admin approval. Please wait for approval before logging in.");
+            return error;
+        }
+        if ( user.getUserStatus() == UserStatus.REJECTED) {
+            LoginResponseDTO error = new LoginResponseDTO();
+            error.setSuccess(false);
+            error.setMessage("Your publisher account has been rejected by the admin. Please contact support for more information.");
             return error;
         }
 

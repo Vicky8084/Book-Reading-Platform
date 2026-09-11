@@ -31,6 +31,11 @@ public class PageController {
         return "bookscreen";
     }
 
+    @GetMapping("/read/{id}")
+    public String readBook(@org.springframework.web.bind.annotation.PathVariable int id) {
+        return "readbook";
+    }
+
     @GetMapping("/books")
     public String book(){
         return "books";
@@ -49,6 +54,11 @@ public class PageController {
     @GetMapping("/admin-login")
     public String adminLogin(){
         return "adminlogin";
+    }
+
+    @GetMapping("/admin-dashboard")
+    public String adminDashboard(){
+        return "admindashboard";
     }
 
 }

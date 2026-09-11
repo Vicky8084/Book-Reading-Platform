@@ -3,7 +3,7 @@ package com.vicky.online_book_reading_platform.service;
 import com.vicky.online_book_reading_platform.ResponseDTO.UserResponseDTO;
 import com.vicky.online_book_reading_platform.converter.UserConverter;
 import com.vicky.online_book_reading_platform.enums.Role;
-import com.vicky.online_book_reading_platform.enums.Status;
+import com.vicky.online_book_reading_platform.enums.UserStatus;
 import com.vicky.online_book_reading_platform.exception.AppException;
 import com.vicky.online_book_reading_platform.model.User;
 import com.vicky.online_book_reading_platform.repository.UserRepository;
@@ -36,6 +36,7 @@ public class UserService {
         log.info("Registering user with email: {}", userRequestDTO.getEmail());
         Optional<User> optionalUser = userRepository.findByEmail(userRequestDTO.getEmail());
 
+
         //if User is already present then this exception will occur
         if(optionalUser.isPresent()){
             throw new AppException("User Already Registered..");
@@ -51,12 +52,12 @@ public class UserService {
 
         User savedUser;
         if(user.getRole() == Role.USER){
-            user.setStatus(Status.ACTIVE);
+            user.setUserStatus(UserStatus.ACTIVE);
             savedUser = userRepository.save(user);
             emailService.sendWelcomeEmail(savedUser);
             log.info("User saved as ACTIVE with role USER, email: {}", savedUser.getEmail());
         }else if(user.getRole() == Role.PUBLISHER){
-            user.setStatus(Status.INACTIVE);
+            user.setUserStatus(UserStatus.PENDING);
             savedUser = userRepository.save(user);
             emailService.sendWelcomeEmail(savedUser);
             log.info("User saved as INACTIVE with role PUBLISHER, email: {}", savedUser.getEmail());

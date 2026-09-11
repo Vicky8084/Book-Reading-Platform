@@ -1,7 +1,7 @@
 package com.vicky.online_book_reading_platform.model;
 
 import com.vicky.online_book_reading_platform.enums.Role;
-import com.vicky.online_book_reading_platform.enums.Status;
+import com.vicky.online_book_reading_platform.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -27,9 +27,9 @@ public class User {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "status", nullable = false)
+    @Column(name = "userStatus", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private UserStatus userStatus;
 
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
